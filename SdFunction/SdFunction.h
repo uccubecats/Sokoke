@@ -15,4 +15,4 @@ extern size_t logBufferlen;
 bool initSDCard();
 bool LogWriteBuffer();
 void writeDataToBuffer(uint32_t timestamp, float temperature, float pressure);
-void randomSensorData();
+

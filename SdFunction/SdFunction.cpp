@@ -81,11 +81,3 @@ void writeDataToBuffer(uint32_t timestamp, float temperature, float pressure) {
 
 //temp
 
-void randomSensorData() { 
-    float temperature = random(200, 301) / 10.0f;
-    float pressure = random(9000, 11001) / 10.0f;
-    uint32_t timestamp = millis();
-
-    writeDataToBuffer(timestamp, temperature, pressure);
-}
-

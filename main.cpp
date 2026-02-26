@@ -15,11 +15,6 @@ void loop() {
     }
 
     uint32_t now = millis();
-    if (now - lastLogTime >= LOG_INTERVAL_MS) {
-        lastLogTime = now;
-        randomSensorData();
-    }
-
     if (now - lastWriteTime >= WRITE_INTERVAL_MS) {
         lastWriteTime = now;
         if (logBufferlen > 0) {
