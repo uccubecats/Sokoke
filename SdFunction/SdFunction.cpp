@@ -3,20 +3,21 @@
 #include <SPI.h>
 #include "RockblockFunction/RockblockFunction.h"
 #include "SdFunction.h"
+#include "../Sensors.h"
 
 #define SD_CS_PIN 5
 #define MUTEX_TIMEOUT_MS 5000
 
-const uint32_t WRITE_INTERVAL_MS = 60000; 
+const uint32_t WRITE_INTERVAL_MS = 6000; // 1 minute
 const char* CSV_FILE_PATH = "/sensor_log.csv";
 uint32_t lastWriteTime = 0;
 bool sdReady = false;
 
-char LogBuffer[65536]; // 64KB 
+char csvLogBuffer[CSV_LOG_BUFFER_SIZE];
 size_t logBufferlen = 0;
 
-static const char* const CSV_COLUMNS[] = {"temp", "pressure"};
-static const int NUM_COLUMNS = sizeof(CSV_COLUMNS) / sizeof(CSV_COLUMNS[0]);
+static const char *CSV_COLUMNS[SensorDataType::SENSOR_COUNT];
+static const int NUM_SENSORS = SensorDataType::SENSOR_COUNT;
 
 static const uint32_t ROCKBLOCK_SEND_INTERVAL_MS = 60000;
 static Table* rockblockTable = NULL;
@@ -54,6 +55,10 @@ bool initSDCard() { // Init SD card and create CSV file with header if it doesn'
         return false;
     }
 
+    for (size_t i = 0; i < SensorDataType::SENSOR_COUNT; i++) {
+        CSV_COLUMNS[i] = get_sensor_name((SensorDataType)i);
+    }
+
     uint64_t cardSize = SD.cardSize() / (1000 * 1000 * 1000);
     Serial.printf("SD Card Size: %lluGB\n", cardSize);
 
@@ -66,7 +71,7 @@ bool initSDCard() { // Init SD card and create CSV file with header if it doesn'
             return false;
         }
         headerFile.print("timestamp_ms");
-        for (int i = 0; i < NUM_COLUMNS; i++) {
+        for (int i = 0; i < NUM_SENSORS; i++) {
             headerFile.print(",");
             headerFile.print(CSV_COLUMNS[i]);
         }
@@ -78,7 +83,7 @@ bool initSDCard() { // Init SD card and create CSV file with header if it doesn'
 }
 
 bool LogWriteBuffer() { // Write log buffer to SD card and clear buffer
-    // uint32_t now = millis();
+    uint32_t now = millis();
     if (logBufferlen == 0) {
         return true;
     }
@@ -95,7 +100,7 @@ bool LogWriteBuffer() { // Write log buffer to SD card and clear buffer
         return false;
     }
 
-    size_t bytesWritten = logFile.write((const uint8_t*)LogBuffer, logBufferlen);
+    size_t bytesWritten = logFile.write((const uint8_t*)csvLogBuffer, logBufferlen);
     logFile.close();
 
     if (bytesWritten != logBufferlen) {
@@ -104,10 +109,11 @@ bool LogWriteBuffer() { // Write log buffer to SD card and clear buffer
         return false;
     }
 
+    // Clear the buffer while holding the mutex to avoid races with writers.
     logBufferlen = 0;
 
-    // uint32_t duration = millis() - now;
-    // Serial.printf("Wrote %u bytes to SD in %u ms\n", bytesWritten, duration);
+    uint32_t duration = millis() - now;
+    Serial.printf("Wrote %u bytes to SD in %u ms\n", bytesWritten, duration);
     xSemaphoreGive(logMutex);
     return true;
 }
@@ -115,26 +121,29 @@ bool LogWriteBuffer() { // Write log buffer to SD card and clear buffer
 
 void writeDataToBuffer(const char* name, float value) { // Write data to log buffer
     if (rockblockTable) {
-        float temp = InvalidTemp;
-        float pressure = InvalidPressure;
-        if (strcmp(name, "temp") == 0) {
-            temp = value;
-        } else if (strcmp(name, "pressure") == 0) {
-            pressure = value;
+        
+        int index = -1;
+        for (int i = 0; i < NUM_SENSORS; i++) {
+            if (strcmp(name, CSV_COLUMNS[i]) == 0) {
+                index = i;
+                break;
+            }
         }
 
-        if (table_memsize(rockblockTable) + sizeof(TableEntry) + 2 <= 340) {
-            add_entry(rockblockTable, (TableEntry){ .time = millis(), .temp = temp, .pressure = pressure });
+        if (table_memsize(rockblockTable) + sizeof(TableEntry) + 2 <= 340 && index != -1) { // Check if adding this entry would exceed the 340 byte SBD limit (with some buffer for metadata)
+            add_entry(rockblockTable, (TableEntry){ .time = millis(), .type = (SensorDataType)index, .data = value, });
+        } else if (index == -1) {
+            Serial.println("Unknown sensor name, not adding to rockblock buffer value for " + String(name)); 
         }
     }
 
-    for (int i = 0; i < NUM_COLUMNS; i++) { 
+    for (int i = 0; i < NUM_SENSORS; i++) { 
         if (strcmp(name, CSV_COLUMNS[i]) == 0) { 
             char entry[64];
 
             int pos = snprintf(entry, sizeof(entry), "%u", millis()); 
 
-            for (int j = 0; j < NUM_COLUMNS; j++) { 
+            for (int j = 0; j < NUM_SENSORS; j++) { 
                 if (j == i) {
                     int written = snprintf(entry + pos, sizeof(entry) - pos, ",%.2f", value);
                     if (written < 0 || pos + written >= (int)sizeof(entry)) { 
@@ -155,7 +164,7 @@ void writeDataToBuffer(const char* name, float value) { // Write data to log buf
                 return;
             }
 
-            if (logBufferlen + pos >= sizeof(logBuffer)) {
+            if (logBufferlen + pos >= sizeof(csvLogBuffer)) {
                 Serial.println("Log buffer overflow, flushing to SD");
                 xSemaphoreGive(logMutex);
                 if (!LogWriteBuffer()) {
@@ -167,7 +176,7 @@ void writeDataToBuffer(const char* name, float value) { // Write data to log buf
                 }
             }
 
-            memcpy(logBuffer + logBufferlen, entry, pos); // Append new entry to log buffer
+            memcpy(csvLogBuffer + logBufferlen, entry, pos); // Append new entry to log buffer
             logBufferlen += pos;
 
             xSemaphoreGive(logMutex);
@@ -176,19 +185,19 @@ void writeDataToBuffer(const char* name, float value) { // Write data to log buf
     }
 }
 
-//test Data
+//temp
 
-// static uint32_t nextTempTime = 0;
-// static uint32_t nextPressureTime = 0;
+static uint32_t nextTempTime = 0;
+static uint32_t nextPressureTime = 0;
 
-// void randomSensorData() {
-//     uint32_t now = millis();
-//     if (now >= nextTempTime) {
-//         writeDataToBuffer("temp", random(200, 301) / 10.0f);
-//         nextTempTime = now + random(5, 50);
-//     }
-//     if (now >= nextPressureTime) {
-//         writeDataToBuffer("pressure", random(9000, 11001) / 10.0f);
-//         nextPressureTime = now + random(30, 200);
-//     }
-// }
+void randomSensorData() {
+    uint32_t now = millis();
+    if (now >= nextTempTime) {
+        writeDataToBuffer("ATH30_temperature", random(200, 301) / 10.0f);
+        nextTempTime = now + random(5, 50);
+    }
+    if (now >= nextPressureTime) {
+        writeDataToBuffer("BMP390_pressure", random(9000, 11001) / 10.0f);
+        nextPressureTime = now + random(30, 200);
+    }
+}

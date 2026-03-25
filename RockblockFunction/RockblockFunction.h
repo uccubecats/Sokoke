@@ -1,16 +1,15 @@
 #pragma once
 
+#include "../Sensors.h"
 #include <Arduino.h>
 #include <IridiumSBD.h>
 
-constexpr float InvalidTemp = -512.0f;
-constexpr float InvalidPressure = -1.0f;
-
 typedef struct {
 	uint64_t time;
-	float temp;
-	float pressure;
+    SensorDataType type;
+	float data;
 } __attribute__((packed)) TableEntry;
+
 
 typedef struct {
 	unsigned short size;
@@ -26,7 +25,7 @@ Table *new_table();
 void free_table(Table *t);
 Table *checkTable(Table *t);
 void add_entry(Table *t, TableEntry e);
-Table *add_sensor_data(Table *t, uint64_t time, float temp, float pressure);
+Table *add_sensor_data(Table *t, uint64_t time, SensorDataType type, float data);
 void seal_table(Table *t);
 SerializedTable serialize_table(Table *t);
 Table *deserialize_table(SerializedTable t);
