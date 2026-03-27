@@ -12,8 +12,8 @@ extern uint32_t lastWriteTime;
 extern bool sdReady;
 
 constexpr size_t CSV_LOG_BUFFER_SIZE = 64 * 1024; // 64KB
-extern char csvLogBuffer[CSV_LOG_BUFFER_SIZE];
-extern size_t logBufferlen;
+static char *csvLogBuffer;
+static size_t logBufferlen;
 
 bool initSDCard();
 bool LogWriteBuffer();

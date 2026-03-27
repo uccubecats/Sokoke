@@ -13,9 +13,6 @@ const char* CSV_FILE_PATH = "/sensor_log.csv";
 uint32_t lastWriteTime = 0;
 bool sdReady = false;
 
-char csvLogBuffer[CSV_LOG_BUFFER_SIZE];
-size_t logBufferlen = 0;
-
 static const char *CSV_COLUMNS[SensorDataType::SENSOR_COUNT];
 static const int NUM_SENSORS = SensorDataType::SENSOR_COUNT;
 
@@ -24,6 +21,9 @@ static Table* rockblockTable = NULL;
 static uint32_t lastRockblockSendTime = 0;
 
 bool initRockblockBuffer() {
+    csvLogBuffer = malloc(CSV_LOG_BUFFER_SIZE * sizeof(const char)); // shouldn't require the sizeof part but you never know with these things
+    logBufferlen = 0;
+
     if (!rockblockTable) {
         rockblockTable = new_table();
     }
@@ -164,7 +164,7 @@ void writeDataToBuffer(const char* name, float value) { // Write data to log buf
                 return;
             }
 
-            if (logBufferlen + pos >= sizeof(csvLogBuffer)) {
+            if (logBufferlen + pos >= CSV_LOG_BUFFER_SIZE) {
                 Serial.println("Log buffer overflow, flushing to SD");
                 xSemaphoreGive(logMutex);
                 if (!LogWriteBuffer()) {
