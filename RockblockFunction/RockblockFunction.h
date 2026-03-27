@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Sensors.h"
 #include <Arduino.h>
 #include <IridiumSBD.h>
+#include "../Sensors.h"
 
 typedef struct {
 	uint64_t time;

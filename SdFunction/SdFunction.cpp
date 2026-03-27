@@ -8,7 +8,7 @@
 #define SD_CS_PIN 5
 #define MUTEX_TIMEOUT_MS 5000
 
-const uint32_t WRITE_INTERVAL_MS = 6000; // 1 minute
+const uint32_t WRITE_INTERVAL_MS = 60000; // 1 minute
 const char* CSV_FILE_PATH = "/sensor_log.csv";
 uint32_t lastWriteTime = 0;
 bool sdReady = false;

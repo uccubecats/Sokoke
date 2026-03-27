@@ -11,7 +11,7 @@ extern const uint32_t WRITE_INTERVAL_MS;
 extern uint32_t lastWriteTime;
 extern bool sdReady;
 
-constexpr size_t CSV_LOG_BUFFER_SIZE = 96 * 1024; // 96KB 
+constexpr size_t CSV_LOG_BUFFER_SIZE = 64 * 1024; // 64KB
 extern char csvLogBuffer[CSV_LOG_BUFFER_SIZE];
 extern size_t logBufferlen;
 

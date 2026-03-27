@@ -1,9 +1,17 @@
 #pragma once
 
 #include <Arduino.h>
+#include <limits>
 #include "SdFunction/SdFunction.h"
-#include "RockblockFunction/RockblockFunction.h"
 #include <freertos/FreeRTOS.h>
+
+/* ------------------------------ PID Constants ----------------------------- */
+
+extern float kp;
+extern float ki;
+extern float kd;
+extern float tragetTemperature;
+extern float maxVal;
 
 /* ---------------------------- Invalid Constants --------------------------- */
 
