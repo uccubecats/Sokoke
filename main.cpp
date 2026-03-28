@@ -5,13 +5,16 @@
 #include <INA/INA.h>
 #include <PIDHeatController/PIDHeatController.h>
 #include <PWMController/PWMController.h>
-#include <BluetoothFunction/BluetoothFunction.h>
+#include "BluetoothSerial.h"
+
+BluetoothSerial SerialBT;
 
 uint64_t lastTime = 0;
 float targetTemperature = 30.0f;
 
 void setup() {
-  initBluetooth();
+  Serial.begin(115200);
+  SerialBT.begin("ESP32_PID_Controller");
   initAht30();
   initializeINA228();
   PWMSetup();
@@ -37,7 +40,7 @@ void loop() {
     SerialBT.println("%)");
     
     // Clear buffer
-    while (SerialBT.available() > 0) SerialBT.read();
+    while(SerialBT.available() > 0) SerialBT.read();
   }
   
 

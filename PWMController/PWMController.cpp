@@ -1,10 +1,10 @@
 
 #include <Arduino.h>
 #include <PWMController/PWMController.h>
-#include <BluetoothFunction/BluetoothFunction.h>
+
 
 /*
- * ESP32 MOSFET PWM Control via Serial Monitor
+ * ESP32 MOSFET PWM Control via SerialBT Monitor
  * MOSFET: FQP30N06L
  */
 

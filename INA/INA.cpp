@@ -1,3 +1,4 @@
+
 #include <Arduino.h>
 #include <Adafruit_INA228.h>
 #include <algorithm>
@@ -5,7 +6,7 @@
 #include <iomanip>
 #include <numeric>
 #include <iostream>
-#include <BluetoothFunction/BluetoothFunction.h>
+#include "INA.h"
 
 Adafruit_INA228 ina228 = Adafruit_INA228();
 

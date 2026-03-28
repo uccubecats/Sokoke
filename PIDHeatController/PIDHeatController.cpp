@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <PIDHeatController/PIDHeatController.h>
 
-float kp = 20.0f;
-float ki = 1.0f;
-float kd = 5.0f;
+float kp = 0.8f;
+float ki = 0.1f;
+float kd = 2.0f;
 float maxVal = 255.0f;
 
 float integral = 0.0f;

@@ -2,7 +2,6 @@
 #include <Wire.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <BluetoothFunction/BluetoothFunction.h>
 
 #include "driver_aht30_interface.h"
 
@@ -115,5 +114,5 @@ extern "C" void aht30_interface_debug_print(const char *const fmt, ...)
     vsnprintf(buffer, sizeof(buffer), fmt, args);
     va_end(args);
 
-    SerialBT.print(buffer);
+    Serial.print(buffer);
 }

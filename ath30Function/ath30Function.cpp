@@ -5,18 +5,21 @@
 #include <iomanip>
 #include <numeric>
 #include <iostream>
-#include <BluetoothFunction/BluetoothFunction.h>
+#include "ath30Function.h"
 
 std::vector<float> TbufferVec(256);
 
+float temperature;
+uint8_t humidity;
+
 void initAht30() {
     if (aht30_basic_init() != 0){
-    SerialBT.println("aht30: init failed.");
+        SerialBT.println("aht30: init failed.");
     
         while (1);
     }
     else{
-      SerialBT.println("aht30: init success.");
+        SerialBT.println("aht30: init success.");
     }
 }
 

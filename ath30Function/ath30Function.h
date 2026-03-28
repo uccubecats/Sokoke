@@ -2,8 +2,12 @@
 
 #include <Arduino.h>
 
-float temperature;
-uint8_t humidity;
+#include <BluetoothSerial.h>
+
+extern BluetoothSerial SerialBT;
+
+extern float temperature;
+extern uint8_t humidity;
 
 void initAht30();
 float readAht30();
