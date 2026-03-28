@@ -5,5 +5,6 @@
 float temperature;
 uint8_t humidity;
 
-bool initAht30();
-std::tuple<float, uint8_t, bool> readAht30();
+void initAht30();
+float readAht30();
+void printAht30();
