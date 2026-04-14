@@ -88,91 +88,178 @@ void writeCore() {
 
 /* ------------------------------ inital setup ------------------------------ */
 
+// void setup() {
+//     Serial.begin(115200);
+    
+//     while(!Serial) {
+//         delay(100);
+//     }
+
+//     // randomSeed((uint32_t)esp_random());
+
+//     /* ---------------------------------- inits --------------------------------- */
+
+
+//     // Initialize AHT30 Temperature sensor
+
+//     if (aht30_basic_init() != 0) {
+//         Serial.println("Failed to initialize AHT30 sensor");
+//         while (true) {
+//             delay(1000);
+//         }
+//     }
+
+//     // Initialize MPU6050 sensor
+//     if(!mpu.begin()) {
+//         Serial.println("Failed to initialize MPU6050 sensor");
+//         while (true) {
+//             delay(1000);
+//         }
+//     }
+
+//     // Initialize BMP390 Pressure sensor
+//     // initBMP390();
+
+
+//     // Initialize Mutex
+
+//     logMutex = xSemaphoreCreateMutex(); 
+//     if (logMutex == NULL) {
+//         Serial.println("Failed to create mutex");
+//         while (true) {
+//             delay(1000);
+//         }
+//     }
+
+
+//     // Initialize SD card
+    
+//     sdReady = initSDCard();
+//     if (!sdReady) {
+//         Serial.println("Failed to initialize SD card");
+//         while (true) {
+//             delay(1000);
+//         }
+//     }
+
+//     // Initialize rockblock buffer
+
+//     if (!initRockblockBuffer()) {
+//         Serial.println("Failed to initialize rockblock buffer");
+//         while (true) {
+//             delay(1000);
+//         }
+//     }
+
+//     /* --------------------------- Create pinned tasks -------------------------- */
+
+//     xTaskCreatePinnedToCore(
+//         sensorTask,
+//         "SensorDataTask",
+//         4096,
+//         NULL,
+//         1,
+//         NULL,
+//         READ_CORE_ID
+//     );
+    
+//     xTaskCreatePinnedToCore(
+//         sdWriteTask,
+//         "SDWriteTask",
+//         4096,
+//         NULL,
+//         1,
+//         NULL,
+//         WRITE_CORE_ID
+//     );
+// }
+
+// void setup() {
+//     Serial.begin(115200);
+// }
+
+#define IridiumSerial Serial2
+#define RX2_PIN 16
+#define TX2_PIN 17
+#define DIAGNOSTICS false // Change this to see diagnostics
+
+// Declare the IridiumSBD object
+IridiumSBD modem(IridiumSerial);
+
 void setup() {
     Serial.begin(115200);
-    
-    while(!Serial) {
-        delay(100);
-    }
-
-    // randomSeed((uint32_t)esp_random());
-
-    /* ---------------------------------- inits --------------------------------- */
-
-
-    // Initialize AHT30 Temperature sensor
-
-    if (aht30_basic_init() != 0) {
-        Serial.println("Failed to initialize AHT30 sensor");
-        while (true) {
-            delay(1000);
-        }
-    }
-
-    // Initialize MPU6050 sensor
-    if(!mpu.begin()) {
-        Serial.println("Failed to initialize MPU6050 sensor");
-        while (true) {
-            delay(1000);
-        }
-    }
-
-    // Initialize BMP390 Pressure sensor
-    // initBMP390();
-
-
-    // Initialize Mutex
-
-    logMutex = xSemaphoreCreateMutex(); 
-    if (logMutex == NULL) {
-        Serial.println("Failed to create mutex");
-        while (true) {
-            delay(1000);
-        }
-    }
-
-
-    // Initialize SD card
-    
-    sdReady = initSDCard();
-    if (!sdReady) {
-        Serial.println("Failed to initialize SD card");
-        while (true) {
-            delay(1000);
-        }
-    }
-
-    // Initialize rockblock buffer
-
-    if (!initRockblockBuffer()) {
-        Serial.println("Failed to initialize rockblock buffer");
-        while (true) {
-            delay(1000);
-        }
-    }
-
-    /* --------------------------- Create pinned tasks -------------------------- */
-
-    xTaskCreatePinnedToCore(
-        sensorTask,
-        "SensorDataTask",
-        4096,
-        NULL,
-        1,
-        NULL,
-        READ_CORE_ID
-    );
-    
-    xTaskCreatePinnedToCore(
-        sdWriteTask,
-        "SDWriteTask",
-        4096,
-        NULL,
-        1,
-        NULL,
-        WRITE_CORE_ID
-    );
+    Serial.println("Hello, World!");
 }
+
+// void setup()
+// {
+//     int signalQuality = -1;
+//     int err;
+// 
+//     // Start the console serial port
+//     Serial.begin(115200);
+//     while (!Serial)
+//         ;
+// 
+//     // Start the serial port connected to the satellite modem
+//     IridiumSerial.begin(19200, SERIAL_8N1, RX2_PIN, TX2_PIN);
+// 
+//     // Begin satellite modem operation
+//     Serial.println("Starting modem...");
+//     err = modem.begin();
+//     if (err != ISBD_SUCCESS)
+//     {
+//         Serial.print("Begin failed: error ");
+//         Serial.println(err);
+//         if (err == ISBD_NO_MODEM_DETECTED)
+//             Serial.println("No modem detected: check wiring.");
+//         return;
+//     }
+// 
+//     // Example: Print the firmware revision
+//     char version[12];
+//     err = modem.getFirmwareVersion(version, sizeof(version));
+//     if (err != ISBD_SUCCESS)
+//     {
+//         Serial.print("FirmwareVersion failed: error ");
+//         Serial.println(err);
+//         return;
+//     }
+//     Serial.print("Firmware Version is ");
+//     Serial.print(version);
+//     Serial.println(".");
+// 
+//     // Example: Test the signal quality.
+//     // This returns a number between 0 and 5.
+//     // 2 or better is preferred.
+//     err = modem.getSignalQuality(signalQuality);
+//     if (err != ISBD_SUCCESS)
+//     {
+//         Serial.print("SignalQuality failed: error ");
+//         Serial.println(err);
+//         return;
+//     }
+// 
+//     Serial.print("On a scale of 0 to 5, signal quality is currently ");
+//     Serial.print(signalQuality);
+//     Serial.println(".");
+// 
+//     // Send the message
+//     Serial.print("Trying to send the message.  This might take several minutes.\r\n");
+//     err = modem.sendSBDText("Hello, world!");
+//     if (err != ISBD_SUCCESS)
+//     {
+//         Serial.print("sendSBDText failed: error ");
+//         Serial.println(err);
+//         if (err == ISBD_SENDRECEIVE_TIMEOUT)
+//             Serial.println("Try again with a better view of the sky.");
+//     }
+// 
+//     else
+//     {
+//         Serial.println("Hey, it worked!");
+//     }
+// }
 
 // don't use
 void loop() {}
