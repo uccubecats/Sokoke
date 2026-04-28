@@ -18,6 +18,7 @@
 #include "src/PWMController/PWMController.h"
 #include "src/RockblockFunction/RockblockFunction.h"
 #include "src/SdFunction/SdFunction.h"
+#include "src/SensorInit/sensorInit.h"
 #include "src/Sensors.h"
 #include "src/aht30Function/aht30Function.h"
 #include "src/bmp_function/bmp_function.h"
@@ -25,7 +26,7 @@
 #include "src/ina_function/ina_function.h"
 #include "src/log_wrapper/log_wrapper.h"
 #include "src/mcp_function/mcp_function.h"
-#include "src/sensorInit.h"
+
 
 /* ----------------------------------- IO ----------------------------------- */
 

@@ -1,4 +1,4 @@
-#include "SensorInit.h"
+#include "sensorInit.h"
 #include <arduino.h>
 
 bool bmp_outside_alive;
