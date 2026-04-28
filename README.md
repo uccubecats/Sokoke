@@ -235,5 +235,3 @@ Contact / Questions
 -------------------
 
 For questions about specific modules, check the per-module READMEs in `src/`. You can also open issues on the repository to request features or report bugs.
-
------
