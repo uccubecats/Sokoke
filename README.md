@@ -72,23 +72,33 @@ tracking, and survivability.
 
 Core components include:
 
-- ESP32 (primary flight computer for data collection and control)
-- BMP390 (high-accuracy barometric pressure for altitude estimation)
-- AHT30 (temperature and humidity sensing inside/outside payload)
-- INA219 / INA228 (power monitoring for battery and subsystem analysis)
-- FXOS8700 / FXAS21002C (IMU for payload orientation and motion tracking)
-- MCP9808 (precision internal temperature monitoring)
-- SpotGen 4 GPS (live tracking and post-flight recovery)
-- SD card module (primary onboard data storage)
-- RockBLOCK Iridium modem (satellite telemetry and secondary GPS)
-- Kapton heating pads + MOSFET control (active thermal regulation)
-- GoPro MAX2 (external high-altitude video capture)
+- [ESP32](https://a.co/d/07C4VmTO)
+  - primary flight computer for data collection and control
+- [BMP390](https://a.co/d/024NGFiK) 
+  - high-accuracy barometric pressure for altitude estimation
+- [AHT30](https://a.co/d/022H3fro) 
+  - temperature and humidity sensing inside/outside payload
+- [INA219](https://a.co/d/0jgzTkRU) / [INA228](https://a.co/d/03YWTxpj)
+  - power monitoring for battery and subsystem analysis
+- [FXOS8700 / FXAS21002C](https://www.adafruit.com/product/3463) 
+  - IMU for payload orientation and motion tracking
+- [MCP9808](https://www.adafruit.com/product/1782) 
+  - precision internal temperature monitoring
+- [SpotGen 4 GPS](https://www.findmespot.com/en-us/products-services/spot-gen4) 
+  - live tracking and post-flight recovery
+- [SD card module](https://a.co/d/0cG6BlbM)
+  - primary onboard data storage
+- [RockBLOCK 9603 Iridium modem](https://www.groundcontrol.com/product/rockblock-9603-compact-plug-and-play-satellite-transmitter/) 
+  - satellite telemetry and secondary GPS
+- [Kapton heating pads](https://a.co/d/013tWFy0) + [MOSFETs](https://a.co/d/09iMKFLd)  
+  - active thermal regulation
+- [GoPro MAX2](https://gopro.com/en/us/shop/cameras/learn/max2/CHDHZ-311-master.html) 
+  - external high-altitude video capture
 
 Wiring & Power
 --------------
 
-- All sensors communicate over a shared I2C bus; ensure proper pull-up resistors,
-  especially when using longer wiring inside the payload.
+- All sensors communicate over a shared I2C bus.
 - The ESP32 acts as the central controller for sensors, storage, and thermal control.
 - Heating elements are driven via MOSFETs and require careful power routing due to
   higher current draw.
@@ -102,8 +112,10 @@ Building & Uploading
 --------------------
 
 - This repository is structured for the Arduino/PlatformIO toolchains. The primary sketch is `main.ino` at the project root.
-- Using Arduino IDE: open `main.ino`, select the target board (e.g., ESP32), set serial port, and upload.
-- Using PlatformIO: create or adapt `platformio.ini` for your board, then build and upload with `pio run -t upload`.
+- Using Arduino IDE: open `main.ino`, select the target board (e.g., ESP32 dev module), set serial port, and upload.
+
+> [!IMPORTANT]
+> PlatformIO builds currently have issues with RockBLOCK support. Use Arduino IDE for builds and uploads.
 
 Configuration
 -------------
