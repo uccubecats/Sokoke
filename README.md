@@ -2,7 +2,7 @@
 
 Sokoke is an embedded telemetry and control firmware framework for the ESP32 developed for the CubeCats 2026 high-altitude balloon (HAB) mission. The system is designed to collect atmospheric and system data, maintain internal payload temperature in extreme conditions, and record onboard video throughout flight. It supports reliable data logging, real-time GPS tracking, and modular sensor integration, while also serving as a hands-on platform to teach new members engineering design, programming, and mission operations.
 
-![Photo of the CubeCats 2026 Catise mission and board members of the organization](https://github.com/uccubecats/Sokoke/blob/main/Team.jpg?raw=true)
+![Photo of the CubeCats 2026 Catise mission and board members of the organization](https://github.com/uccubecats/Sokoke/blob/SeanDolan-FINAL-CODE/res/Team.jpg?raw=true)
 
 Key goals:
 - Educate first-year and new members in engineering design, programming, and project management through a full HAB mission lifecycle.
@@ -172,7 +172,7 @@ to teach new members engineering design, embedded systems, and mission operation
 Flight Results
 -----------------
 
-![Photo of the earth's horision captured during the mission](https://github.com/uccubecats/Sokoke/blob/main/Mission.jpg?raw=true)
+![Photo of the earth's horision captured during the mission](https://github.com/uccubecats/Sokoke/blob/SeanDolan-FINAL-CODE/res/Mission.jpg?raw=true)
 
 Repository Layout
 -----------------
