@@ -197,7 +197,7 @@ Flight Results
 -----------------
 
 ![Photo of the Earth's horizon captured during the mission](https://github.com/uccubecats/Sokoke/blob/SeanDolan-FINAL-CODE/res/Mission.jpg?raw=true)
-*Images captured from the onboard 360° camera during flight at ~30-33 km altitude.*
+*Image captured from the onboard 360° camera during flight at ~30-33 km altitude.*
 
 Repository Layout
 -----------------
