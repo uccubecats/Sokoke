@@ -77,13 +77,13 @@ Core components include:
 - [BMP390](https://a.co/d/024NGFiK) 
   - high-accuracy barometric pressure for altitude estimation
 - [AHT30](https://a.co/d/022H3fro) 
-  - temperature and humidity sensing inside/outside payload
+  - temperature and humidity sensing inside payload
 - [INA219](https://a.co/d/0jgzTkRU) / [INA228](https://a.co/d/03YWTxpj)
   - power monitoring for battery and subsystem analysis
 - [FXOS8700 / FXAS21002C](https://www.adafruit.com/product/3463) 
   - IMU for payload orientation and motion tracking
 - [MCP9808](https://www.adafruit.com/product/1782) 
-  - precision internal temperature monitoring
+  - precision external temperature monitoring
 - [SpotGen 4 GPS](https://www.findmespot.com/en-us/products-services/spot-gen4) 
   - live tracking and post-flight recovery
 - [SD card module](https://a.co/d/0cG6BlbM)
