@@ -1,6 +1,6 @@
 # Sokoke — CubeCats 2026 Catise HAB Project
 
-Sokoke is an embedded telemetry and control firmware framework for the ESP32 developed for the CubeCats 2026 high-altitude balloon (HAB) mission. The system is designed to collect atmospheric and system data, maintain internal payload temperature in extreme conditions, and record onboard video throughout flight. It supports reliable data logging, real-time GPS tracking, and modular sensor integration, while also serving as a hands-on platform to teach new members engineering design, programming, and mission operations.
+Sokoke is an embedded telemetry and control firmware framework for ESP32-based systems developed for the CubeCats 2026 high-altitude balloon (HAB) mission. The system is designed to collect atmospheric and system data, maintain internal payload temperature in extreme conditions, and record onboard video throughout flight. It supports reliable data logging, real-time GPS tracking, and modular sensor integration, while also serving as a hands-on platform to teach new members engineering design, programming, and mission operations.
 
 ![Photo of the CubeCats 2026 Catise mission and board members of the organization](https://github.com/uccubecats/Sokoke/blob/SeanDolan-FINAL-CODE/res/Team.jpg?raw=true)
 
@@ -20,14 +20,15 @@ Contents
 - [Sokoke — CubeCats 2026 Catise HAB Project](#sokoke--cubecats-2026-catise-hab-project)
   - [Contents](#contents)
   - [Features](#features)
-  - [Features](#features-1)
   - [Hardware Supported](#hardware-supported)
+  - [External Libraries](#external-libraries)
   - [Wiring \& Power](#wiring--power)
   - [Building \& Uploading](#building--uploading)
   - [Configuration](#configuration)
   - [Runtime Behavior \& Usage](#runtime-behavior--usage)
   - [Logging \& Telemetry](#logging--telemetry)
   - [Mission Overview](#mission-overview)
+  - [System Architecture](#system-architecture)
   - [Flight Results](#flight-results)
   - [Repository Layout](#repository-layout)
   - [Contributing](#contributing)
@@ -36,9 +37,6 @@ Contents
 
 > [!WARNING]
 > The PID controller is not fully tuned yet. If you use the heater control, retune the PID gains before relying on it for normal operation.
-
-Features
---------
 
 Features
 --------
@@ -72,28 +70,36 @@ tracking, and survivability.
 
 Core components include:
 
-- [ESP32](https://a.co/d/07C4VmTO)
-  - primary flight computer for data collection and control
-- [BMP390](https://a.co/d/024NGFiK) 
-  - high-accuracy barometric pressure for altitude estimation
-- [AHT30](https://a.co/d/022H3fro) 
-  - temperature and humidity sensing inside payload
-- [INA219](https://a.co/d/0jgzTkRU) / [INA228](https://a.co/d/03YWTxpj)
-  - power monitoring for battery and subsystem analysis
-- [FXOS8700 / FXAS21002C](https://www.adafruit.com/product/3463) 
-  - IMU for payload orientation and motion tracking
-- [MCP9808](https://www.adafruit.com/product/1782) 
-  - precision external temperature monitoring
-- [SpotGen 4 GPS](https://www.findmespot.com/en-us/products-services/spot-gen4) 
-  - live tracking and post-flight recovery
-- [SD card module](https://a.co/d/0cG6BlbM)
-  - primary onboard data storage
-- [RockBLOCK 9603 Iridium modem](https://www.groundcontrol.com/product/rockblock-9603-compact-plug-and-play-satellite-transmitter/) 
-  - satellite telemetry and secondary GPS
-- [Kapton heating pads](https://a.co/d/013tWFy0) + [MOSFETs](https://a.co/d/09iMKFLd)  
-  - active thermal regulation
-- [GoPro MAX2](https://gopro.com/en/us/shop/cameras/learn/max2/CHDHZ-311-master.html) 
-  - external high-altitude video capture
+- [ESP32](https://a.co/d/07C4VmTO) -  primary flight computer for data collection and control
+- [BMP390](https://a.co/d/024NGFiK) - high-accuracy barometric pressure for altitude estimation
+- [AHT30](https://a.co/d/022H3fro) - temperature and humidity sensing inside payload
+- [INA219](https://a.co/d/0jgzTkRU) / [INA228](https://a.co/d/03YWTxpj) - power monitoring for battery and subsystem analysis
+- [FXOS8700 / FXAS21002C](https://www.adafruit.com/product/3463) - IMU for payload orientation and motion tracking
+- [MCP9808](https://www.adafruit.com/product/1782) - precision external temperature monitoring
+- [SpotGen 4 GPS](https://www.findmespot.com/en-us/products-services/spot-gen4) - live tracking and isolated secondary GPS
+- [SD card module](https://a.co/d/0cG6BlbM) - primary onboard data storage
+- [RockBLOCK 9603 Iridium modem](https://www.groundcontrol.com/product/rockblock-9603-compact-plug-and-play-satellite-transmitter/) - satellite telemetry and Primary GPS
+- [Kapton heating pads](https://a.co/d/013tWFy0) + [MOSFETs](https://a.co/d/09iMKFLd) - active thermal regulation
+- [GoPro MAX2](https://gopro.com/en/us/shop/cameras/learn/max2/CHDHZ-311-master.html) - external high-altitude video capture
+
+External Libraries
+------------------
+
+The firmware uses the following third-party libraries and platform packages:
+
+- [ESP32 Arduino Core](https://github.com/espressif/arduino-esp32) - provides `Arduino.h`, `BluetoothSerial`, and the ESP32 runtime layer used by the sketch
+- [Adafruit AHTX0](https://github.com/adafruit/Adafruit_AHTX0) - AHT30 temperature and humidity sensor support
+- [Adafruit BMP3XX](https://github.com/adafruit/Adafruit_BMP3XX) - BMP390 pressure sensor support
+- [Adafruit FXAS21002C](https://github.com/adafruit/Adafruit_FXAS21002C) - gyroscope support
+- [Adafruit FXOS8700](https://github.com/adafruit/Adafruit_FXOS8700) - accelerometer and magnetometer support
+- [Adafruit INA219](https://github.com/adafruit/Adafruit_INA219) - current and voltage monitor support
+- [Adafruit INA228](https://github.com/adafruit/Adafruit_INA228) - current and voltage monitor support
+- [Adafruit MCP9808](https://github.com/adafruit/Adafruit_MCP9808) - temperature sensor support
+- [Adafruit BusIO](https://github.com/adafruit/Adafruit_BusIO) - shared I2C/SPI helper dependency for the Adafruit sensor libraries
+- [Adafruit Unified Sensor](https://github.com/adafruit/Adafruit_Sensor) - common sensor event types used by the Adafruit drivers
+- [MadgwickAHRS](https://github.com/arduino-libraries/MadgwickAHRS) - sensor fusion for orientation estimates
+- [SdFat](https://github.com/greiman/SdFat) - SD card filesystem and file I/O
+- [IridiumSBD](https://github.com/mikalhart/IridiumSBD) - RockBLOCK / Iridium modem communication
 
 Wiring & Power
 --------------
@@ -152,6 +158,7 @@ Logging & Telemetry
 - Optional RockBLOCK integration enables low-bandwidth satellite transmission
   of critical telemetry (e.g., position updates).
 - Data redundancy is prioritized to ensure no critical flight data is lost.
+  
 
 Mission Overview
 ----------------
@@ -169,15 +176,34 @@ Project Sokoke is a high-altitude balloon mission designed to:
 In addition to technical goals, the project serves as a training platform
 to teach new members engineering design, embedded systems, and mission operations.
 
+System Architecture
+-------------------
+
+The Sokoke system is centered around an ESP32 flight computer that interfaces with:
+
+- Environmental sensors (temperature, pressure, humidity)
+- IMU for motion and orientation tracking
+- Power monitoring systems
+- SD card for onboard data logging
+- GPS module for tracking and recovery
+- Heating system controlled via PWM + PID
+
+All subsystems feed into a centralized data structure which is:
+1. Logged to onboard storage
+2. Used for real-time control (thermal regulation)
+3. Optionally transmitted via satellite telemetry
+
 Flight Results
 -----------------
 
-![Photo of the earth's horision captured during the mission](https://github.com/uccubecats/Sokoke/blob/SeanDolan-FINAL-CODE/res/Mission.jpg?raw=true)
+![Photo of the Earth's horizon captured during the mission](https://github.com/uccubecats/Sokoke/blob/SeanDolan-FINAL-CODE/res/Mission.jpg?raw=true)
+*Images captured from the onboard 360° camera during flight at ~30-33 km altitude.*
 
 Repository Layout
 -----------------
 
-- `main.ino` — Top-level Arduino sketch and application glue.
+- `main.ino` — Top-level Arduino sketch and application glue.  
+- `res/` — Images and media used in the README
 - `src/` — Core source files and modules.
 	- `SensorInit.cpp`, `sensorInit.h` — sensor initialization helpers.
 	- `Sensors.h` — shared data types and externs.
@@ -211,4 +237,3 @@ Contact / Questions
 For questions about specific modules, check the per-module READMEs in `src/`. You can also open issues on the repository to request features or report bugs.
 
 -----
-
